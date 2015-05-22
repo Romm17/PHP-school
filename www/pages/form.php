@@ -5,7 +5,7 @@
 			return str_replace("%title%", "Hello", $str);
 		}
 		function getTop($str){
-			return str_replace("%top%", "<h1>Registration</h1>", 
+			return str_replace("%top%", "<h1>Authorization</h1>", 
 								$str);
 		}
 		function getMain($str, $error){
