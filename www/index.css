@@ -1,0 +1,16 @@
+body{
+	padding: 200px;
+}
+
+#top{
+	position: fixed;
+	top: 0px;
+	background-color: #DDDD00;
+	width: 1000px;
+	min-height: 20px;
+}
+
+#main{
+	padding: 20px 10px;
+	border:1px solid #0000FF;
+}
