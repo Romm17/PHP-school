@@ -18,7 +18,8 @@
 			foreach ($_SESSION['user']->wantList as $i => $value) {
 				$db = mysqli_connect('localhost', 'admin', 'Password131', 'Test');
 				$res = $db->query("SELECT value FROM wishes WHERE id='$value'")->fetch_assoc();
-				$newText .= "<p>".($i + 1).". ".$res['value']."<button class='glyphicon glyphicon-remove' ></button></p>";
+				$newText .= "<p>".($i + 1).". ".$res['value']."<button class='glyphicon glyphicon-remove' 
+							onclick='<?php removeWish(".$i.");?>' ></button></p>";
 			}
 			$newText .= "<p><a href='index.php?page=statistic' > Show statistic </a></p>";
 			return str_replace("%main%", $newText, 

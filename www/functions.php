@@ -10,7 +10,7 @@
 			$result = $res['id'];
 		}
 		else{
-			$db->query("INSERT INTO wishes (value) VALUES ('XepHya')");
+			$db->query("INSERT INTO wishes (value) VALUES ('X')");
 			$res = $wishes;
 			$result = $res['id']; 
 		}
@@ -19,9 +19,11 @@
 		header("Location: index.php?page=refresh");
 	}
 
-	function removeWish($wish){
-		$db = mysqli_connect('localhost', 'admin', 'Password131', 'Test');
-		$currUser = serialize($_SESSION['user']);
+	function removeWish($id){
+		/*unset($_SESSION['user']->wantList[$id]);
+		var_dump($_SESSION['user']->wantList);*/
+		$_SESSION['user'] = 'sdfsdfsdfsdfsdfsdfsd';
+		updateUser();
 	}
 
 	function checkUser($user){
@@ -34,14 +36,13 @@
 			return 2;
 		}
 		$db = mysqli_connect('localhost', 'admin', 'Password131', 'Test');
-		$res = $db->query("SELECT value FROM user");
-		while($str = $res->fetch_assoc()){
-			$data = unserialize($str['value']);
-			if($data && $_POST['login'] == $data->login && $_POST['pass'] == $data->pass){
-				$req = $str['value'];
-				$id = $db->query("SELECT id FROM user WHERE value='$req' ")->fetch_assoc();
-				$_SESSION['user'] = $data;
-				$_SESSION['id'] = $id['id'];
+		$res = $db->query("SELECT * FROM user");
+		while($data = $res->fetch_assoc()){
+			$user = new User($data['login'], $data['pass']);
+			$user->wantList = unserialize($data['wantList']);
+			if($data && $_POST['login'] == $user->login && $_POST['pass'] == $user->pass){
+				$_SESSION['user'] = $user;
+				$_SESSION['id'] = $data['id'];
 				$_SESSION['times'] = 0;
 				return 0;
 			}
@@ -62,9 +63,9 @@
 			return 3;
 		}
 		$db = mysqli_connect('localhost', 'admin', 'Password131', 'Test');
-		$ser = serialize($user);
-		$db->query("INSERT INTO user (value) VALUES ('$ser')");
-		$id = $db->query("SELECT id FROM user WHERE value='$ser' ")->fetch_assoc();
+		$ser = serialize($user->wantList);
+		$db->query("INSERT INTO user (login, pass, wantList) VALUES ('$user->login', '$user->pass', '$ser')");
+		$id = $db->query("SELECT id FROM user WHERE login='$user->login' ")->fetch_assoc();
 		$_SESSION['user'] = $user;
 		$_SESSION['id'] = $id['id'];
 		return 0;
@@ -78,8 +79,9 @@
 
 	function updateUser(){
 		$db = mysqli_connect('localhost', 'admin', 'Password131', 'Test');
-		$currUser = serialize($_SESSION['user']);
+		$currUser = $_SESSION['user'];
+		$wl = serialize($currUser->wantList);
 		$id = $_SESSION['id'];
-		$db->query("UPDATE user SET value='$currUser' WHERE id='$id'");
+		$db->query("UPDATE user SET login='$currUser->login', pass='$currUser->pass', wantlist='$wl' WHERE id='$id'");
 	}
 ?>
