@@ -1,39 +1,32 @@
 <?php
-	session_start();
 
 	class User {
 		public $login;
 		public $pass;
+		public $wantList;
 
 		public function __construct($login, $pass){
 			$this->login = $login;
 			$this->pass = $pass;
+			$this->wantList = array();
 		}
 	}
 
-	function checkUser(){
-		$file = fopen("/var/www/dev.school-server/www/base.txt", "rt");
-		while(!feof($file)){
-			$str = fgets($file, 1000);
-			$data = unserialize(substr_replace($str, "", strlen($str) - 2));
-			if($data && $_POST['login'] == $data->login && $_POST['pass'] == $data->pass){
-				$_SESSION['login'] = $_POST['login'];
-				$_SESSION['times'] = 0;
-				fclose($file);
-				return 0;
-			}
-		}
-		fclose($file);
-		return 1;
+	session_start();
+	require_once("functions.php");
+
+	$page = "start";
+
+	if(!isset($redis)){
+		$redis = new Redis();
+		$redis->connect('127.0.0.1');
 	}
 
-	function makeUser($user){
-		$file = fopen("/var/www/dev.school-server/www/base.txt", "at");
-		$ser = serialize($user);
-		fputs($file, $ser."\r\n");
-		$_SESSION['login'] = $_POST['login'];
-		fclose($file);
-		return true;
+	if(!isset($key))
+		$key = 'unset';
+
+	if(isset($_GET['wish'])){
+		addWish();
 	}
 
 	$error = 0;
@@ -43,32 +36,33 @@
 		$user = new User($_POST['login'], $_POST['pass']);
 
 		if($_POST['choose'] == 'Registration'){
-			makeUser($user);
+			$error = makeUser($user);
 		}
 		else{
 			$error = checkUser($user);
-		}
-		
+		}		
 	}
 
 	$tmp = file_get_contents("template.html");
-	$page = "start";
+	
 	if(isset($_GET['page'])){
 		if(file_exists("./pages/".$_GET['page'].".php")){
 			$page = $_GET['page'];
 		}
 	}
 
-	if(isset($_SESSION['login'])){
+	if(isset($_SESSION['user'])){
 		if($page == 'start') 
 			$page = 'refresh';
 		if($page == 'refresh') 
 			$_SESSION['times']++;
 	}
 
+	//resetTable("user");
+
 	require("core.php");
 	require("./pages/".$page.".php");
-	$core = new $page();
+	$core = new $page($error, $redis, $key);
 
-	echo $core->getPage($tmp, $error); 
+	echo $core->getPage($tmp, $error, $redis, $key); 
 ?>

@@ -1,5 +1,5 @@
-O:4:"User":2:{s:5:"login";s:4:"Roma";s:4:"pass";s:3:"123";}
+O:4:"User":3:{s:5:"login";s:4:"Roma";s:4:"pass";s:3:"123";s:8:"wantList";a:4:{i:0;s:6:"fghfgh";i:1;s:4:"ghfg";i:2;s:6:"Coffee";i:3;s:6:"fsdgdf";}}
 O:4:"User":2:{s:5:"login";s:5:"Bodya";s:4:"pass";s:3:"234";}
 O:4:"User":2:{s:5:"login";s:5:"admin";s:4:"pass";s:5:"admin";}
 O:4:"User":2:{s:5:"login";s:5:"guest";s:4:"pass";s:5:"guest";}
-O:4:"User":2:{s:5:"login";s:5:"fifth";s:4:"pass";s:5:"fifth";}
+O:4:"User":2:{s:5:"login";s:5:"fifth";s:4:"pass";s:5:"fifth";}O:4:"User":3:{s:5:"login";s:6:"Vladka";s:4:"pass";s:3:"777";s:8:"wantList";a:0:{}}
