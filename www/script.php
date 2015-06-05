@@ -53,6 +53,9 @@
 		$i = 0;
 		$portion = 1000;
 		$nameOffset = $argv[1] / 10;
+		$prevTime = microtime();
+		$prevDerivative;
+		$delta = 5;
 		while($i < $argv[1]){
 			$insertion = "INSERT INTO user (login, pass, wantList) VALUES ";
 			for($j = 0; $j < $portion; $j++){
@@ -77,8 +80,26 @@
 			$db->query($insertion);
 			$newQ = $db->query("SELECT login FROM user");
 			if(isset($prevQ)){
-				if($prevQ->num_rows == $newQ->num_rows)
+				if($prevQ->num_rows == $newQ->num_rows){
+					$currTime = microtime();
+					if(isset($prevDerivative)){
+						$derivative = ($newQ->num_rows - $prevPrevQ->num_rows) / ($currTime - $prevTime);
+						if($derivative > $prevDerivative){
+							$delta = -$delta;
+						}
+						$portion += $delta;
+							echo $portion."\n";
+						$prevDerivative = $derivative;
+						$prevTime = $currTime;
+					}
+					else{
+						$prevDerivative = ($newQ->num_rows - $prevPrevQ->num_rows) / ($currTime - $prevTime);
+					}
 					$i -= $portion;
+				}
+			}
+			else{
+				$prevPrevQ = $newQ;
 			}
 			$prevQ = $newQ;
 		}
