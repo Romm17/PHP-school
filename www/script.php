@@ -38,20 +38,28 @@
 
 	function addNames(){
 		$db = mysqli_connect("localhost", "admin", "Password131", "Test");
+		$faker = Faker\Factory::create();
+
 		//$db->query("CREATE TABLE `Test`.`femaleNames` ( `id` INT NOT NULL AUTO_INCREMENT, `name` VARCHAR(30) NOT NULL, PRIMARY KEY (`id`))")
 
-		$file = file_get_contents("femaleNames.txt");
-		$data = split("\n", $file);
+		//$file = file_get_contents("femaleNames.txt");
+		/*$data = split("\n", $file);
 		foreach ($data as $key => $value) {
 			//$value = substr($value, 0, strpos($value, " "));
 			$db->query("INSERT INTO wishes (value) VALUES ('$value')");
+		}*/
+		for($i = 0; $i < 5000; $i++){
+
+			$db->query("INSERT INTO femaleNames (value) VALUES ('$faker->name')");
 		}
 	}
 
 	function generateUsers($argv){
 		$db = mysqli_connect("localhost", "admin", "Password131", "Test");
+		mysqli_error($db);
+		$faker = Faker\Factory::create();
 		$i = 0;
-		$portion = 1000;
+		$portion = 100;
 		$nameOffset = $argv[1] / 10;
 		while($i < $argv[1]){
 			$insertion = "INSERT INTO user (login, pass, wantList) VALUES ";
@@ -62,8 +70,8 @@
 				$pos = $sex == 0 ? rand(1, 4275) : rand(1, 1219);
 				$table = $sex == 0 ? "femaleNames" : "maleNames";
 				$res = $db->query("SELECT * FROM $table WHERE id=$pos")->fetch_assoc();
-				$name = $res['name'].rand(20, $nameOffset);
-				$password = "Password".rand(100, 999);
+				$name = $res['value'].rand(20, $nameOffset);
+				$password = $faker->password;
 				$user = new User($name, $password);
 				$listSize = rand(1, 10);
 				for($x = 0; $x < $listSize; $x++)
@@ -77,8 +85,13 @@
 			$db->query($insertion);
 			$newQ = $db->query("SELECT login FROM user");
 			if(isset($prevQ)){
-				if($prevQ->num_rows == $newQ->num_rows)
+				if($prevQ->num_rows == $newQ->num_rows){
 					$i -= $portion;
+					if($portion > 100){
+						$portion--;
+						echo $portion."\n";
+					}
+				}
 			}
 			$prevQ = $newQ;
 		}

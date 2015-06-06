@@ -64,5 +64,5 @@
 	require("./pages/".$page.".php");
 	$core = new $page($error, $redis, $key);
 
-	echo $core->getPage($tmp, $error, $redis, $key); 
+	echo $core->getPage($tmp, $error, $redis, $key);
 ?>
